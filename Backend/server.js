@@ -1,3 +1,4 @@
+const express = require('express');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -25,6 +26,8 @@ const db = mysql.createConnection({
     database: 'todo_app',
 });
 
+// Secret key for JWT
+const secretKey = 'surma';
 
 function authenticateToken(req, res, next) {
     const token = req.header('Authorization');
@@ -74,3 +77,57 @@ function authenticateToken(req, res, next) {
         
       });
     });
+
+
+app.post('/api/signup', (req, res) => {
+        const { username, useremail, password } = req.body;
+      
+        // Check if the username and password are provided
+        if (!username || !password) {
+          return res.status(400).json({ error: 'Username and password are required.' });
+        }
+      
+        // Check if the username is already taken
+        const checkUserSql = 'SELECT * FROM users WHERE User_Name = ?';
+        db.query(checkUserSql, [username], (err, results) => {
+          if (err) {
+            return res.status(500).json({ error: 'Internal server error.' });
+          }
+      
+          // If the username is already taken
+          if (results.length > 0) {
+            return res.status(409).json({ error: 'Username is already taken.' });
+          }
+      
+          // Insert the new user into the database
+          const insertUserSql = 'INSERT INTO users (User_Name, User_Email, User_Password) VALUES (?, ?, ?)';
+          db.query(insertUserSql, [username, useremail, password], (err, results) => {
+            if (err) {
+              return res.status(500).json({ error: 'Internal server error.' });
+            }
+      
+            return res.status(201).json({ message: 'User created successfully.' });
+          });
+        });
+ });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ // Start the server
+app.listen(port, () => {
+    console.log(`Server started on port ${port}`);
+});
