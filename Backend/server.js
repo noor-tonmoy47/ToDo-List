@@ -112,7 +112,36 @@ app.post('/api/signup', (req, res) => {
  });
 
 
-
+ app.post('/api/createlist', (req, res) => {
+    const { token, itemName, id } = req.body;
+  
+    // Check if the token and listName are provided
+    if (!token || !itemName) {
+      return res.status(400).json({ error: 'Token and item name are required.' });
+    }
+  
+    try {
+      
+      const decodedToken = jwt.verify(token, secretKey);
+      
+      //const userId = decodedToken.id;
+  
+      // Insert the new list into the database
+      const insertListSql = 'INSERT INTO lists (userName, content, id) VALUES (?, ?, ?)';
+      db.query(insertListSql, [decodedToken.username,  itemName, id], (err, results) => {
+        if (err) {
+          console.error('Database error:', err.message);
+          return res.status(500).json({ error: 'Internal server error.' });
+        }
+  
+        return res.status(201).json({ message: 'Task created successfully.' });
+      });
+    } catch (err) {
+      // Handle JWT verification error (invalid token)
+      console.error('JWT verification error:', err.message);
+      return res.status(401).json({ error: 'Invalid token.' });
+    }
+  });
 
 
 
