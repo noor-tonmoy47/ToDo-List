@@ -144,7 +144,48 @@ app.post('/api/signup', (req, res) => {
   });
 
 
-
+  app.delete('/api/deleteList', (req, res) => {
+    const { token, itemId } = req.body;
+    //const itemId = req.params.id;
+  
+    // Check if the token and listId are provided
+    if (!token || !itemId) {
+      return res.status(400).json({ error: 'Token and item ID are required.' });
+    }
+  
+    try {
+      // Verify the token to get the user information
+      const decodedToken = jwt.verify(token, secretKey);
+      const username = decodedToken.username;
+  
+      
+      // Check if the list with the given listId belongs to the user
+      const checkListSql = 'SELECT content FROM lists WHERE id = ? AND userName = ?';
+      db.query(checkListSql, [itemId, username], (err, results) => {
+        if (err) {
+          return res.status(500).json({ error: 'Internal server error.' });
+        }
+  
+        // If the list with the given listId doesn't exist or doesn't belong to the user
+        if (results.length === 0) {
+          return res.status(404).json({ error: 'Task not found.' });
+        }
+  
+        // Delete the list from the database
+        const deleteListSql = 'DELETE FROM lists WHERE id = ?';
+        db.query(deleteListSql, [itemId], (err, results) => {
+          if (err) {
+            return res.status(500).json({ error: 'Internal server error.' });
+          }
+  
+          return res.status(200).json({ message: 'Task deleted successfully.' });
+        });
+      });
+    } catch (err) {
+      // Handle JWT verification error (invalid token)
+      return res.status(401).json({ error: 'Invalid token.' });
+    }
+  });
 
 
 
