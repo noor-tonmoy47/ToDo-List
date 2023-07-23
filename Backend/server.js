@@ -124,8 +124,7 @@ app.post('/api/signup', (req, res) => {
       
       const decodedToken = jwt.verify(token, secretKey);
       
-      //const userId = decodedToken.id;
-  
+      
       // Insert the new list into the database
       const insertListSql = 'INSERT INTO lists (userName, content, id) VALUES (?, ?, ?)';
       db.query(insertListSql, [decodedToken.username,  itemName, id], (err, results) => {
@@ -146,7 +145,6 @@ app.post('/api/signup', (req, res) => {
 
   app.delete('/api/deleteList', (req, res) => {
     const { token, itemId } = req.body;
-    //const itemId = req.params.id;
   
     // Check if the token and listId are provided
     if (!token || !itemId) {
@@ -186,15 +184,6 @@ app.post('/api/signup', (req, res) => {
       return res.status(401).json({ error: 'Invalid token.' });
     }
   });
-
-
-
-
-
-
-
-
-
 
 
  // Start the server
