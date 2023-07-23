@@ -12,7 +12,7 @@ function toggleForm(formId) {
   }
 
   //Login
-  
+
   loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -44,4 +44,43 @@ function toggleForm(formId) {
         console.error('Login error:', error);
         alert('Login failed. Please check your username and password.');
     });
+});
+
+
+//Signup
+
+const baseUrl = 'http://localhost:3000'; 
+const signupEndpoint = '/api/signup';
+
+document.getElementById('signupForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const username = document.getElementById('username_signup').value;
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password_signup').value;
+
+  //POST request to the signup endpoint on your server
+  fetch(baseUrl + signupEndpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ username, useremail: email, password })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Signup failed. Please try again later.');
+    }
+    return response.json();
+  })
+  .then(data => {
+    
+    alert(data.message);
+    window.location.href = './index.html'; 
+  })
+  .catch(error => {
+    
+    console.error(error.message);
+    alert(error.message);
+  });
 });
