@@ -1,3 +1,5 @@
+//const { response } = require("express");
+
 function toggleForm(formId) {
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
@@ -30,6 +32,9 @@ function toggleForm(formId) {
     })
     .then(response => response.json())
     .then(data => {
+      if(data.token.length === 0) {
+        response.status(500).json({"message" : "token not found"});
+      }
         // If login is successful, data will contain the JWT token
         const token = data.token;
         console.log(token);

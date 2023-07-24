@@ -85,3 +85,30 @@ function deleteFromDB(id) {
             alert(error.message);
         });
 }
+
+function load() {
+    const token = localStorage.getItem('token'); // Assuming the JWT token is stored in localStorage
+    fetch(baseUrl + "/api/fetch", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ token: token })
+    }).then(response => response.json())
+        .then(data => {
+            data.forEach(element => {
+                let li = document.createElement("li");
+                li.innerHTML = element.content;
+                listContainer.appendChild(li);
+                li.id = element.id;
+                let span = document.createElement("span");
+                span.innerHTML = "\u00d7";
+                li.appendChild(span);
+            })
+        })
+        .catch(error => {
+            console.error('Error : ' + error);
+        });
+}
+
+load();

@@ -17,6 +17,7 @@ app.use(cors());
 
 // importing database and jwt functions
 const mysql = require('mysql');
+const { Console } = require('console');
 
 // Database connection
 const db = mysql.createConnection({
@@ -185,6 +186,36 @@ app.delete('/api/deleteList', (req, res) => {
     }
 });
 
+app.post('/api/fetch', (req, res) => {
+    const { token } = req.body;
+
+    // Check if the token and listName are provided
+    if (!token) {
+        return res.status(400).json({ error: 'Token and item name are required.' });
+    }
+
+    try {
+
+        const decodedToken = jwt.verify(token, secretKey);
+
+
+        // Insert the new list into the database
+        const insertListSql = 'SELECT id, content from lists WHERE userName = ?';
+        db.query(insertListSql, [decodedToken.username], (err, results) => {
+            if (err) {
+                console.error('Database error:', err.message);
+                return res.status(500).json({ error: 'Internal server error.' });
+            }
+
+            console.log(results);
+            return res.json(results);
+        });
+    } catch (err) {
+        // Handle JWT verification error (invalid token)
+        console.error('JWT verification error:', err.message);
+        return res.status(401).json({ error: 'Invalid token.' });
+    }
+});
 
 // Start the server
 app.listen(port, () => {
