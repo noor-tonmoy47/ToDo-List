@@ -6,5 +6,7 @@ const taskRouter = require('./routes/tasks');
 
 app.use('/api/v1/tasks', taskRouter);
 
+app.use(express.static('./public'));
+app.use(express.json());
 
 module.exports = app;
