@@ -22,7 +22,7 @@ function toggleForm(formId) {
     const password = document.getElementById('password').value;
 
     // POST request to the server API to handle login
-    fetch('http://localhost:3000/api/login', {
+    fetch('http://localhost:3000', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
