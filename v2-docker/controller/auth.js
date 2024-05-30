@@ -9,7 +9,10 @@ const loginAuth = async(req, res) => {
 
     // Checking if the username and password are provided
     if (!username || !password) {
-        return res.status(400).json({ error: 'Username and password are required.' });
+        return res.status(400).json({ 
+            status: "Bad Request",
+            message: "Username and password are required" 
+        });    
     }
 
     // Checking if the user exists in the database
@@ -18,12 +21,18 @@ const loginAuth = async(req, res) => {
 
     db.query(checkUserExists, [username], (err, results) => {
         if (err) {
-            return res.status(500).json({ error: 'Internal server error.' });
+            return res.status(500).json({ 
+                status: "failed",
+                error: "Internal server error" 
+            });        
         }
 
         // If the user with the provided username doesn't exist
         if (results.length === 0) {
-            return res.status(400).json({ error: 'Invalid username or password.' });
+            return res.status(400).json({ 
+                status: "Bad Request",
+                message: "Invalid username or password" 
+            });        
         }
         
 
@@ -33,8 +42,10 @@ const loginAuth = async(req, res) => {
         db.query(getHashedPassword,[username], async(err, results)=>{
             
             if(err){
-                return res.status(500).json({ error: 'Internal server error.' });
-
+                return res.status(500).json({ 
+                    status: "failed",
+                    error: "Internal server error" 
+                });
             }
             if(await bcrypt.compare(password, results[0].user_password)){
                 
@@ -46,7 +57,7 @@ const loginAuth = async(req, res) => {
 
                 return res.status(200).json({
                     status: "successful",
-                    token: token,
+                    data: token,
                     message: "User Successfully logged in"
                 });
             }
@@ -54,8 +65,8 @@ const loginAuth = async(req, res) => {
 
                 // Password didn't match
                 return res.status(401).json({
-                    status: "failed",
-                    message: "Unauthorized"
+                    status: "Unauthorized",
+                    message: "Password didn't match"
                 });
             }
 
@@ -73,7 +84,10 @@ const signup = (req, res) => {
 
     // Check if the username and password are provided
     if (!username || !password) {
-        return res.status(400).json({ error: 'Username and password are required.' });
+        return res.status(400).json({ 
+            status: "Bad Request",
+            message: "Username and password are required" 
+        });
     }
 
     // Check if the username is already taken
@@ -82,12 +96,18 @@ const signup = (req, res) => {
     
     db.query(checkUserSql, [username], async(err, results) => {
         if (err) {
-            return res.status(500).json({ error: 'bada beem' });
+            return res.status(500).json({ 
+                status: "failed",
+                error: "Internal server error" 
+            });
         }
 
         // If the username is already taken
         if (results.length > 0) {
-            return res.status(409).json({ error: 'Username is already taken.' });
+            return res.status(409).json({ 
+                status: "Conflict",
+                message: "Username is already taken"
+            });
         }
         
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -96,10 +116,17 @@ const signup = (req, res) => {
         const insertUserSql = 'INSERT INTO users (username, user_email, user_password) VALUES (?, ?, ?)';
         db.query(insertUserSql, [username, useremail, hashedPassword], (err, results) => {
             if (err) {
-                return res.status(500).json({ error: 'bada boom' });
+                return res.status(500).json({ 
+                    status: "failed",
+                    error: "Internal server error" 
+                });
             }
 
-            return res.status(201).json({ message: 'User created successfully.' });
+            return res.status(201).json({ 
+                status: "Created",
+                message: "User created successfully"
+            });
+
         });
     }); 
 }
