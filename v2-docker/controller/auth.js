@@ -1,5 +1,5 @@
 const db = require('../db/connect');   
-
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 const loginAuth = async(req, res) => {
@@ -37,21 +37,28 @@ const loginAuth = async(req, res) => {
 
             }
             if(await bcrypt.compare(password, results[0].user_password)){
+                
+                // Generate a JWT token and send it as a response
+                const token = jwt.sign({ username: username, role: 'admin' }, process.env.JWT_SECRET, { 
+                    expiresIn: process.env.JWT_EXPIRES_IN
+                });
+                
+
                 return res.status(200).json({
                     status: "successful",
+                    token: token,
                     message: "User Successfully logged in"
                 });
             }
+            else{
 
-            // Password didn't match
-            return res.status(401).json({
-                status: "failed",
-                message: "Unauthorized"
-            })
+                // Password didn't match
+                return res.status(401).json({
+                    status: "failed",
+                    message: "Unauthorized"
+                });
+            }
 
-            //Generate a JWT token and send it as a response
-            // const token = jwt.sign({ username: username, role: 'admin' }, secretKey, { expiresIn: '1h' });
-            // return res.status(200).json({ token: token });
         });
 
 
