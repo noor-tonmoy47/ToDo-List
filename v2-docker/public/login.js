@@ -22,7 +22,7 @@ function toggleForm(formId) {
     const password = document.getElementById('password').value;
 
     // POST request to the server API to handle login
-    fetch('http://localhost:3000', {
+    fetch('http://localhost:3000/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -55,7 +55,7 @@ function toggleForm(formId) {
 //Signup
 
 const baseUrl = 'http://localhost:3000'; 
-const signupEndpoint = '/api/signup';
+const signupEndpoint = '/signup';
 
 document.getElementById('signupForm').addEventListener('submit', (e) => {
   e.preventDefault();
