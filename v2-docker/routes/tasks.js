@@ -4,7 +4,6 @@ const router = express.Router();
 
 
 const {
-    all,
     getAlltasks, 
     createTask, 
     updateTask, 

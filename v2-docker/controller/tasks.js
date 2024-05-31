@@ -3,46 +3,18 @@ const db = require('../db/connect');
 const jwt = require('jsonwebtoken');
 
 
-const all = async(req, res)=>{
-    // const getAllSql = 'SELECT 5 * 5';
-    
-    // try {
-    //     const result = await pool.query(getAllSql);
-
-    //     return res.status(200).json({
-    //         status: "Successful",
-    //         data:{
-    //             data: result
-    //         }
-    //     });
-    // } catch (error) {
-    //     return res.status(404).json({
-    //         status: "failed",
-    //         data:{
-    //             data: err
-    //         }
-    //     });
-    // }
-}
-
 const getAlltasks = async(req, res)=>{
 
-    // const { token } = req.body;
 
     const authHeader = req.headers['authorization'];
     
     const token = authHeader.split(' ')[1];
-    console.log(token);
-
-
-    // console.log(authHeader);
-
-
-
-    // Check if the token and listName are provided
+    
+    // Check if the token is provided
     if (!token) {
-        return res.status(400).json({ error: 'Token and item name are required.' });
+        return res.status(401).json({ error: 'Not Authorized.'});
     }
+    
 
     try {
 
@@ -78,7 +50,7 @@ const createTask = (req, res) =>{
     
     const token = authHeader.split(' ')[1];
 
-    // Check if the token and listName are provided
+    // Check if the token and task are provided
     if (!token || !task) {
         return res.status(400).json({ error: 'Token and task are required.' });
     }
@@ -206,4 +178,4 @@ const deleteTask = (req, res) =>{
         });
 }}
 
-module.exports = {all, getAlltasks , createTask, updateTask, deleteTask};
+module.exports = {getAlltasks , createTask, updateTask, deleteTask};

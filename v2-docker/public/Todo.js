@@ -92,6 +92,12 @@ function deleteFromDB(id) {
 function load() {
     const token = localStorage.getItem('token'); // Assuming the JWT token is stored in localStorage
 
+
+    if(!token){
+        window.location.href = './index.html';
+        return;
+    }
+
     fetch(baseUrl, {
         method: 'GET',
         headers: {
