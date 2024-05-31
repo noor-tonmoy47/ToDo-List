@@ -1,7 +1,7 @@
 const inputBox = document.getElementById("input-box");
 const listContainer = document.getElementById("list-container");
 
-const baseUrl = 'http://localhost:3000';
+const baseUrl = 'http://localhost:3000/api/v1/tasks';
 const createListEndpoint = '/api/createlist';
 function addTask() {
     if (inputBox.value === '') {
@@ -15,21 +15,21 @@ function addTask() {
         let span = document.createElement("span");
         span.innerHTML = "\u00d7";
         li.appendChild(span);
-        addListToDB(li.id, inputBox.value);
+        addListToDB(inputBox.value);
     }
     inputBox.value = '';
 }
 
-function addListToDB(id, content) {
+function addListToDB(content) {
     const token = localStorage.getItem('token');
 
     //POST request to the createlist endpoint on your server
-    fetch(baseUrl + createListEndpoint, {
+    fetch(baseUrl,{
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ token: token, itemName: content, id: id })
+        body: JSON.stringify({ token: token, task: content})
     })
         .then(response => {
             if (!response.ok) {
@@ -77,7 +77,6 @@ function deleteFromDB(id) {
         .then(data => {
             // Handle the response data (e.g., show success message or refresh the task list)
             alert(data.message);
-            // You can refresh the task list here or update it with the new task
         })
         .catch(error => {
             // Handle errors (e.g., display the error message to the user)
@@ -88,27 +87,31 @@ function deleteFromDB(id) {
 
 function load() {
     const token = localStorage.getItem('token'); // Assuming the JWT token is stored in localStorage
-    fetch(baseUrl + "/api/fetch", {
-        method: 'POST',
+    
+    fetch(baseUrl, {
+        method: 'GET',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer: ${token}`
         },
-        body: JSON.stringify({ token: token })
-    }).then(response => response.json())
-        .then(data => {
-            data.forEach(element => {
+    })
+    .then(response => response.json())
+    
+    .then(data => {
+            // console.log(data.result);
+            data.result.forEach(element => {
                 let li = document.createElement("li");
                 li.innerHTML = element.content;
                 listContainer.appendChild(li);
-                li.id = element.id;
+                li.id = element.task_ID;
                 let span = document.createElement("span");
                 span.innerHTML = "\u00d7";
                 li.appendChild(span);
             })
-        })
-        .catch(error => {
-            console.error('Error : ' + error);
-        });
+    })
+    .catch(error => {
+        console.error('Error : ' + error);
+    });
 }
 
 load();
