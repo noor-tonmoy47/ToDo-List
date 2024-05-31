@@ -138,7 +138,11 @@ const updateTask = (req, res) =>{
 
 const deleteTask = (req, res) =>{
     
-    const { token, task } = req.body;
+    const {task} = req.body;
+
+    const authHeader = req.headers['authorization'];
+    
+    const token = authHeader.split(' ')[1];
 
     // Check if the token and listId are provided
     if (!token || !task) {
@@ -195,7 +199,7 @@ const deleteTask = (req, res) =>{
         return res.status(401).json({ 
             status: "failed",
             message: "Unauthorized"
-        }); 
+        });
 }}
 
 module.exports = {all, getAlltasks , createTask, updateTask, deleteTask};

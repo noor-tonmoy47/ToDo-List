@@ -58,28 +58,32 @@ listContainer.addEventListener("click", function (e) {
 }, false);
 
 function deleteFromDB(id) {
-    const token = localStorage.getItem('token'); // Assuming the JWT token is stored in localStorage
+    // const content = document.getElementById(id).textContent;
+    let content = document.getElementById(id).textContent;
 
-    // Make a POST request to the createlist endpoint on your server
-    fetch(baseUrl + "/api/deleteList", {
+    content = content.substring(0, content.length - 1);
+
+
+    const token = localStorage.getItem('token');
+
+    fetch(baseUrl, {
         method: 'DELETE',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization' : `Bearer ${token}`
         },
-        body: JSON.stringify({ token: token, itemId: id })
+        body: JSON.stringify({ task: content})
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to create the task. Please try again later.');
+                throw new Error('Failed to delete the task. Please try again later.');
             }
             return response.json();
         })
         .then(data => {
-            // Handle the response data (e.g., show success message or refresh the task list)
             alert(data.message);
         })
         .catch(error => {
-            // Handle errors (e.g., display the error message to the user)
             console.error(error.message);
             alert(error.message);
         });
@@ -87,7 +91,7 @@ function deleteFromDB(id) {
 
 function load() {
     const token = localStorage.getItem('token'); // Assuming the JWT token is stored in localStorage
-    
+
     fetch(baseUrl, {
         method: 'GET',
         headers: {
