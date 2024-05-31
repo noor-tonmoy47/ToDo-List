@@ -27,25 +27,47 @@ const all = async(req, res)=>{
 
 const getAlltasks = async(req, res)=>{
 
-    // const getAllSql = 'SELECT 5 * 5';
-    
-    // try {
-    //     const result = await pool.query(getAllSql);
+    // const { token } = req.body;
 
-    //     return res.status(200).json({
-    //         status: "Successful",
-    //         data:{
-    //             data: result
-    //         }
-    //     });
-    // } catch (error) {
-    //     return res.status(404).json({
-    //         status: "failed",
-    //         data:{
-    //             data: err
-    //         }
-    //     });
-    // }
+    const authHeader = req.headers['authorization'];
+    
+    const token = authHeader.split(' ')[1];
+    console.log(token);
+
+
+    // console.log(authHeader);
+
+
+
+    // Check if the token and listName are provided
+    if (!token) {
+        return res.status(400).json({ error: 'Token and item name are required.' });
+    }
+
+    try {
+
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
+
+        // Insert the new list into the database
+        const getItems = 'SELECT task_ID, content from lists WHERE username = ?';
+        db.query(getItems, [decodedToken.username], (err, results) => {
+            if (err) {
+                console.error('Database error:', err.message);
+                return res.status(500).json({ error: 'Internal server error.' });
+            }
+
+            // return res.status(200).json(results);
+            return res.status(200).json({
+                status: "success",
+                result: results
+            });
+        });
+    } catch (err) {
+        // Handle JWT verification error (invalid token)
+        console.error('JWT verification error:', err.message);
+        return res.status(401).json({ error: 'Invalid token.' });
+    }
 }
 
 const createTask = (req, res) =>{
@@ -174,6 +196,6 @@ const deleteTask = (req, res) =>{
             status: "failed",
             message: "Unauthorized"
         }); 
-    }}
+}}
 
 module.exports = {all, getAlltasks , createTask, updateTask, deleteTask};
