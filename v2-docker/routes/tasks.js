@@ -13,9 +13,9 @@ const {
 
 
 
-router.route('/').get(getAlltasks).post(createTask);
+router.route('/').get(getAlltasks).post(createTask).delete(deleteTask);
 
-router.route('/:taskID').patch(updateTask).delete(deleteTask);
+// router.route('/:taskID').patch(updateTask).delete(deleteTask);
 
 //get(/api/v1/tasks)   - ->  get all tasks
 
