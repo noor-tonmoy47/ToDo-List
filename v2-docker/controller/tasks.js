@@ -72,7 +72,11 @@ const getAlltasks = async(req, res)=>{
 
 const createTask = (req, res) =>{
     
-    const { token, task} = req.body;
+    const {task} = req.body;
+
+    const authHeader = req.headers['authorization'];
+    
+    const token = authHeader.split(' ')[1];
 
     // Check if the token and listName are provided
     if (!token || !task) {

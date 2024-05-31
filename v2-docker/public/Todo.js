@@ -27,9 +27,10 @@ function addListToDB(content) {
     fetch(baseUrl,{
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer: ${token}`
         },
-        body: JSON.stringify({ token: token, task: content})
+        body: JSON.stringify({task: content})
     })
         .then(response => {
             if (!response.ok) {
@@ -38,7 +39,6 @@ function addListToDB(content) {
             return response.json();
         })
         .then(data => {
-            // Handle the response data (e.g., show success message or refresh the task list)
             console.log(data.message);
         })
         .catch(error => {
