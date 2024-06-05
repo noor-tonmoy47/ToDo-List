@@ -1,9 +1,10 @@
 version: '3.8'
 
 services:
+
   db:
     image: mysql:latest
-    container_name: testTODO-mysql
+    container_name: mysql
     environment:
       - MYSQL_ROOT_PASSWORD=adminLogin
       - MYSQL_DATABASE=todo
@@ -15,6 +16,20 @@ services:
     
     volumes:
       - mysql-data:/var/lib/mysql
+  
+  app:
+    build: .
+    container_name: todo_app
+    ports:
+      - 3000:3000
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=tonmoy
+      - MYSQL_PASSWORD=tonmoyLogin
+      - MYSQL_DATABASE=todo
+      - MYSQL_PORT=3306
+    depends_on:
+      - "db"
 
 
 volumes:
